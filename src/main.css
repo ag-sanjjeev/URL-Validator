@@ -1,0 +1,97 @@
+/*
+  ______________________________________________________________________________________________
+ |                                                                                              |
+ |  Copyright 2024 ag-sanjjeev                                                                  |
+ |                                                                                              |
+ |  The source code is licensed under MIT-style License.                                        |
+ |  The usage, permission and condition are applicable to this source code as per license.      |
+ |  That can be found in LICENSE file or at https://opensource.org/licenses/MIT.                |
+ |______________________________________________________________________________________________|
+
+*/
+
+.app-container {
+	padding: 0.5rem;
+	max-height: 75vh;
+	animation: appLoading 1s ease-in-out 0.5s;
+}
+
+.app-container > * {
+	animation: fadeIn 3s cubic-bezier(1, 0, 1, 0);
+}
+
+.app-container #url-input {
+	min-height: 7rem;
+	max-height: 15rem;
+}
+
+.app-container .url-validator-report {
+	display: block;
+	overflow-y: auto;
+}
+
+.url-validator-report .report-section {
+	position: relative;	
+	padding-top: 1rem;
+}
+
+.report-section .report-section-heading {
+	position: absolute;
+	background: var(--bs-light);
+	top: 2px;
+	padding: 0.25rem;
+}
+
+.report-section .report-badge {
+	width: 100%;
+	min-height: 3rem;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 0.25rem;
+}
+
+.report-section.success .report-section-heading {
+	color: var(--bs-success);
+}
+
+.report-section.success .report-badge {
+	color: var(--bs-success);
+	border-color: var(--bs-success);
+}
+
+.report-section.warning .report-section-heading {
+	color: var(--bs-warning);
+}
+
+.report-section.warning .report-badge {
+	color: var(--bs-warning);
+	border-color: var(--bs-warning);
+}
+
+.report-section.danger .report-section-heading {
+	color: var(--bs-danger);
+}
+
+.report-section.danger .report-badge {
+	color: var(--bs-danger);
+	border-color: var(--bs-danger);
+}
+
+@keyframes appLoading {
+	0% {
+		width: 0px;
+		height: 0px;
+		padding: 0;
+		margin: 0;
+	}
+
+	99% {
+		padding: 0;
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+}

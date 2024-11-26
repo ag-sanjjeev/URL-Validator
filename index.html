@@ -8,11 +8,59 @@
 	<link rel="stylesheet" type="text/css" href="./thirdparty/bootstrap/bootstrap.css" media="all">
 	<link rel="stylesheet" type="text/css" href="./thirdparty/fontawesome/css/all.css" media="all">
 
+	<!-- Custom Style -->
+	<link rel="stylesheet" type="text/css" href="./src/main.css" media="all">
+
 	<title>URL Validator</title>
 </head>
-<body>
+<body class="">
 <!-- Homoglyph Detector -->
+<section class="container-fluid">
+	<!-- URL Validator Tool -->
+	<div class="row justify-content-center align-items-center vh-100">
+		<div class="col-md-5 col-lg-4 card rounded bg-light border border-primary app-container">
+			<!-- Form -->
+			<form action="#" method="post" id="url-validator-form">
+				<!-- URL Input -->
+				<div class="form-floating mb-3">
+					<textarea name="urlInput" id="urlInput" class="form-control" rows="5" autofocus></textarea>
+					<label for="url-input" class="label">URL Input</label>
+				</div>
 
+				<!-- Validate URL Button -->
+				<button type="submit" class="btn btn-outline-primary w-100 mb-3">Validate URL</button>			
+			</form>
+			<!-- Report -->
+			<div class="url-validator-report border-top border-primary">
+				<div class="report-section success">
+					<small class="report-section-heading">Overview</small>
+					<p class="report-badge"></p>
+				</div>
+
+				<div class="report-section success">
+					<small class="report-section-heading">Protocol</small>
+					<p class="report-badge"></p>
+				</div>
+
+				<div class="report-section success">
+					<small class="report-section-heading">Domain</small>
+					<p class="report-badge"></p>
+				</div>
+
+				<div class="report-section success">
+					<small class="report-section-heading">URL Parameters</small>
+					<p class="report-badge"></p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Tool Information -->
+
+</section>
+<!-- Scripts -->
 <script type="text/javascript" src="./thirdparty/bootstrap/bootstrap.bundle.js"></script>
+
+<!-- Custom Scripts -->
+<script type="text/javascript" src="./src/main.js"></script>
 </body>
 </html>
