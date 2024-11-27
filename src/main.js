@@ -42,16 +42,20 @@ class URLValidator {
 		// allowed protocols
 		this.protocols = {
 			'http:' : {
-					'secure' : false,
-					'message' : 'http is unsafe when submit form with your data'
+				'secure' : false,
+				'message' : 'HTTP is unsafe and used for transferring data over the web'
 			},
 			'https:' : {
-					'secure': true,
-					'message' : 'https is safe when submit form with your data'
+				'secure': true,
+				'message' : 'HTTPS is safe and encrypted version of HTTP, providing secure communication'
 			},
 			'ftp:' : {
-					'secure': false,
-					'message': 'unsafe file transfer protocol'
+				'secure': false,
+				'message': 'Unsafe and used for transferring files between computers'
+			},
+			'ftps:' : {
+				'secure': true,
+				'message': 'Safe and used for transferring files between computers'
 			}
 		};
 
