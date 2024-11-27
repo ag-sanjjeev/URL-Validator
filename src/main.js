@@ -56,7 +56,7 @@ class URLValidator {
 		};
 
 		// properties
-		this.isProtocolMissing = false; // used for url without protocol
+		this.isUnknownProtocol = false; // used for url without protocol
 	}
 
 	getUrlCategory() {
@@ -108,7 +108,8 @@ class URLValidator {
 	}
 
 	getReport() {
-
+		// Get URL category before proceed with report generation
+		this.getUrlCategory();
 		this.report = {
 			'overview' : {},
 			'protocol' : {},
@@ -134,7 +135,7 @@ class URLValidator {
 		};
 
 		// Report for invalid or unknown URL
-		if (this.urlCategory == 'invalid') {			
+		if (this.urlCategory == 'invalid') {
 			let defaultMessage = 'Not applicable';
 			let domainMessage = this.prepareCharacterMessage(this.urlCategory, 'domain', this.url);
 			overviewObject.status = 'danger';
@@ -212,6 +213,81 @@ class URLValidator {
 				overviewObject.status = 'success';
 			}
 			overviewObject.message = 'Given URL is IP address. Proceed with this will be dangerous.';				
+		}
+
+		// Report for URL with unknown protocol
+		if (this.urlCategory == 'URL') {
+			let protocol = null;
+			let host = null;
+			let port = null;
+			let pathname = null;
+			let search = null;
+			let hash = null;
+			let urlParameters = null;
+			let defaultMessage = 'Not applicable';
+						
+			if (this.urlObject == null) {
+				host = this.url;
+			} else {
+				protocol = (this.isUnknownProtocol) ? null : this.urlObject.protocol;
+				host = this.urlObject.host;
+				port = this.urlObject.port;
+				pathname = this.urlObject.pathname;
+				search = this.urlObject.search;
+				hash = this.urlObject.hash;
+
+				urlParameters = (pathname == null) ? '' : pathname;
+				urlParameters += (search == null) ? '' : search;
+				urlParameters += (hash == null) ? '' : hash;
+				urlParameters = (urlParameters.trim().length > 0) ? urlParameters : null;
+			}
+
+			let protocolMessage = (protocol == null) ? defaultMessage : this.prepareCharacterMessage(this.urlCategory, 'protocol', protocol);
+			if (protocol !== null) {
+				if (this.protocols.hasOwnProperty(protocol)) {
+					protocolObject.status = (protocolMessage.querySelectorAll('div span.danger').length > 0) ? 'danger' : (protocolMessage.querySelectorAll('div span.warning').length > 0) ? 'warning' : 'success'; 
+					let div = document.createElement('div');
+					div.innerHTML = this.protocols[protocol].message;
+					protocolMessage.appendChild(div);
+					if (this.protocols[protocol].secure) {
+						protocolObject.status = (protocolObject.status == 'danger') ? 'danger' : 'success';
+					} else {
+						protocolObject.status = (protocolObject.status == 'danger') ? 'danger' : 'warning';
+					}
+				}
+			} else {
+				protocolObject.status = 'danger';
+				protocolMessage = 'Unknown protocol is unsafe.';
+			}			
+			protocolObject.message = protocolMessage;
+
+			let domainMessage = this.prepareCharacterMessage(this.urlCategory, 'domain', host);
+			domainObject.status = (domainMessage.querySelectorAll('div span.danger').length > 0) ? 'danger' : (domainMessage.querySelectorAll('div span.warning').length > 0) ? 'warning' : 'success'; 
+			domainObject.message = domainMessage;
+
+			let urlParametersMessage = (urlParameters == null) ? defaultMessage : this.prepareCharacterMessage(this.urlCategory, 'parameters', urlParameters);
+			if (urlParameters !== null) {				
+					urlParametersObject.status = (urlParametersMessage.querySelectorAll('div span.danger').length > 0) ? 'danger' : (urlParametersMessage.querySelectorAll('div span.warning').length > 0) ? 'warning' : 'success';
+			} else {
+					urlParametersObject.status = 'danger';
+			}
+			urlParametersObject.message = urlParametersMessage;			
+			
+			if (domainObject.status == 'danger' || protocolObject.status == 'danger' || urlParametersObject.status == 'danger') {
+				overviewObject.status = 'danger';
+			} else if (domainObject.status == 'warning' || protocolObject.status == 'warning' || urlParametersObject.status == 'warning') {
+				overviewObject.status = 'warning';
+			} else {
+				overviewObject.status = 'success';
+			}
+
+			let overviewMessage = '';
+			// Check for the host match with given URL 
+			if (this.url.match(host) == null) {
+				overviewMessage = 'It might be homoglyph or homograph or IDN URL. Because, the host is not matched with given URL. ';
+			}
+			overviewMessage += `Protocol is ${protocolObject.status} status, Domain Name is ${domainObject.status} status, URL part is ${urlParametersObject.status} status.`;
+			overviewObject.message = overviewMessage;
 		}
 
 		this.report['overview'] = overviewObject;
@@ -305,10 +381,10 @@ class URLValidator {
 			return 'success';
 		}
 		if (urlCategory == 'URL' && urlPart == 'domain' && (charType == 'special' && (character == '.' || character == '-'))) {
-			return 'warning';
+			return 'success';
 		}
 		if (urlCategory == 'URL' && urlPart == 'domain' && charType == 'special') {
-			return 'danger';
+			return 'warning';
 		}
 		if (urlCategory == 'URL' && urlPart == 'domain') { // unknown
 			return 'danger';
@@ -318,13 +394,15 @@ class URLValidator {
 		if (urlCategory == 'URL' && urlPart == 'parameters' && charType == 'alphabet') {
 			return 'success';
 		}
+		if (urlCategory == 'URL' && urlPart == 'parameters' && (charType == 'special' && (character == '/' || character == '?' || character == '&' || character == '='))) {
+			return 'success';
+		}
 		if (urlCategory == 'URL' && urlPart == 'parameters' && (charType == 'number' || charType == 'special')) {
 			return 'warning';
 		}
 		if (urlCategory == 'URL' && urlPart == 'parameters') { // unknown
 			return 'danger';
 		}
-
 	}
 
 	prepareCharacterMessage(urlCategory, urlPart, text) {
@@ -372,48 +450,52 @@ class URLValidator {
 	}
 
 	isActualURL() {
-  	// URL Regex
-  	// const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
-  	let urlObject = false;
   	let protocol = this.getURLProtocol(this.url);
   	
   	if (protocol === null || protocol === undefined || protocol === '') {
   		console.warn('URL does not has a valid protocol');
-  		// use default https protocol
-  		this.isProtocolMissing = true;
+  		// missing or unknown protocol for try without protocol in URL class
+  		this.isUnknownProtocol = true;
   	}
 
-  	try {
-  		if (this.isProtocolMissing) {
-				urlObject = new URL('https://' + this.url);
-  		} else {
-				urlObject = new URL(this.url);
+		if (this.isUnknownProtocol) {
+			try {
+				this.urlObject = new URL('https://' + this.url);
+			} catch (error) {
+				this.urlObject = null;
+				console.warn(error);
+				return false;
 			}
-  	} catch(error) {
-  		this.urlObject = null;
-  		console.error(error);
-  		return false;
-  	}
-
-  	this.urlObject = urlObject;
-
+		} else {
+			// Check for Actual URL
+			try {  		
+				this.urlObject = new URL(this.url);			 
+	  	} catch(error) {
+	  		this.urlObject = null;
+				this.urlCategory = 'invalid';	
+	  		console.warn(error);
+	  		return false;
+	  	}			
+		}
+	  			
   	// check for IP from actual URL
-  	if (this.isIPv4(urlObject.host)) {
+  	if (this.isIPv4(this.urlObject.host)) {
 			this.urlCategory = 'IPv4';
 			return true;
   	}
-
-  	if (this.isIPv6(urlObject.host)) {
+  	
+  	if (this.isIPv6(this.urlObject.host)) {
 			this.urlCategory = 'IPv6';
 			return true;
   	}
 
-		// Check for Actual URL
-		if (urlObject) {
-			this.urlCategory = 'URL';		 	
-			return true;
-		}
+  	if (this.urlObject) {
+  		this.urlCategory = 'URL';	
+			return true;	
+  	}
 
+		this.urlCategory = 'invalid';
+		return false;	
 	}
 
 	isIPv4(url) {
@@ -490,7 +572,6 @@ class URLValidator {
 	  
 	  return (groupCount === 8 || groupCount === 9);
 	}
-
 }
 
 /*============================ 
@@ -503,10 +584,9 @@ form.addEventListener('submit', function(event) {
 	event.stopImmediatePropagation();
 
 	let urlInput = form.urlInput.value;
-	const obj = new URLValidator(urlInput);
-	console.log(obj.getUrlCategory());	
+	const obj = new URLValidator(urlInput);	
 	let report = obj.getReport();
-	console.log(report);
+	
 	if (typeof report != 'object') {
 		throw new Error('Unexpected error');
 		return false;
@@ -522,7 +602,7 @@ form.addEventListener('submit', function(event) {
 			}
 
 			document.getElementById(key).classList.add(report[key].status);
-			console.log(typeof report[key].message);
+			
 			if (typeof report[key].message === 'string' && report[key].message != null) {
 				document.querySelector(`#${key} .message`).innerHTML = report[key].message;
 			} else if (typeof report[key].message === 'object' && report[key].message != null) {

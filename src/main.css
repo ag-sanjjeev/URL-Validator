@@ -66,8 +66,8 @@
 	color: var(--bs-light);
 }
 
-.report-section .report-badge span {
-	margin-left: 2px; 
+.report-section .report-badge span {	
+	margin: 0.5rem 1px; 
 	padding: 0.25rem;
 }
 
