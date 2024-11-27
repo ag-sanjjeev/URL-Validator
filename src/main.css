@@ -43,11 +43,32 @@
 }
 
 .report-section .report-badge {
+	padding: 1.25rem 0.5rem;
 	width: 100%;
 	min-height: 3rem;
 	border-width: 1px;
 	border-style: solid;
 	border-radius: 0.25rem;
+}
+
+.report-section .report-badge .success {
+	background: var(--bs-success);
+	color: var(--bs-light);
+}
+
+.report-section .report-badge .warning {
+	background: var(--bs-warning);
+	color: var(--bs-dark);
+}
+
+.report-section .report-badge .danger {
+	background: var(--bs-danger);
+	color: var(--bs-light);
+}
+
+.report-section .report-badge span {
+	margin-left: 2px; 
+	padding: 0.25rem;
 }
 
 .report-section.success .report-section-heading {
