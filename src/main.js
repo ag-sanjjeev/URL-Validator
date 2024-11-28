@@ -493,10 +493,14 @@ class URLValidator {
 			return true;
   	}
 
-  	if (this.urlObject) {
-  		this.urlCategory = 'URL';	
-			return true;	
-  	}
+  	// Eventhough URL class used, that treats incorrect URL as valid URL as per the test
+  	// For example: `http:..` is treated as valid URL by URL class
+  	// So it required to check whether it is an actual URL
+ 		const hostRegex = new RegExp(/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/); 		
+  	if (this.urlObject && hostRegex.test(this.urlObject.host)) {
+			this.urlCategory = 'URL';	
+			return true;				  
+		}
 
 		this.urlCategory = 'invalid';
 		return false;	
