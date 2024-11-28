@@ -33,13 +33,17 @@ const form = document.getElementById('url-validator-form');
 ==============================*/
 class URLValidator {
 	constructor(url) {
+		
 		if (url == '' || url == undefined || url == null) {
 			throw new Error('URL should not be an empty');
 		}
+		
+		// properties
+		this.isUnknownProtocol = false; // property used for URL without protocol
 		this.url = url.trim(); // remove any whitespace	
-		this.urlObject = null;
+		this.urlObject = null; // property for store URL class object
 
-		// allowed protocols
+		// allowed common protocols
 		this.protocols = {
 			'http:' : {
 				'secure' : false,
@@ -59,10 +63,8 @@ class URLValidator {
 			}
 		};
 
-		// properties
-		this.isUnknownProtocol = false; // used for url without protocol
 	}
-
+	// method to predict and get given URL category 
 	getUrlCategory() {
 		if (this.isIPAddress()) {
 			return this.urlCategory;
@@ -75,7 +77,7 @@ class URLValidator {
 		this.urlCategory = 'invalid';
 		return this.urlCategory;
 	}
-
+	// method to check and get allowed common protocol for given URL
 	getURLProtocol(url) {
 		let protocol = null;
 		for (const key in this.protocols) {
@@ -83,10 +85,9 @@ class URLValidator {
 				protocol = key;
 			}
 		}
-
 		return protocol;		
 	}
-
+	// method to get properties associated with URL class for given URL
 	getURLProperties(url) {
 		let result = null;
 		let urlObject = null;
@@ -107,13 +108,13 @@ class URLValidator {
       username: urlObject.username,
       password: urlObject.password
 	  };
-
 	  return result;
 	}
-
+	// method to get report based on given URL
 	getReport() {
 		// Get URL category before proceed with report generation
 		this.getUrlCategory();
+		// Initializing an empty report property
 		this.report = {
 			'overview' : {},
 			'protocol' : {},
@@ -141,6 +142,7 @@ class URLValidator {
 		// Report for invalid or unknown URL
 		if (this.urlCategory == 'invalid') {
 			let defaultMessage = 'Not applicable';
+			// prepareCharacterMessage method will check individual character by categorize
 			let domainMessage = this.prepareCharacterMessage(this.urlCategory, 'domain', this.url);
 			overviewObject.status = 'danger';
 			overviewObject.message = 'Given URL is invalid or unknown type. Proceed with this will be dangerous.';
@@ -178,10 +180,11 @@ class URLValidator {
 				urlParameters += (hash == null) ? '' : hash;
 				urlParameters = (urlParameters.trim().length > 0) ? urlParameters : null;
 			}
-
+			// report for protocol
 			let protocolMessage = (protocol == null) ? defaultMessage : this.prepareCharacterMessage(this.urlCategory, 'protocol', protocol);
 			if (protocol !== null) {
 				if (this.protocols.hasOwnProperty(protocol)) {
+					// adding message for protocol with existing prepareCharacterMessage for it
 					protocolObject.status = (protocolMessage.querySelectorAll('div span.danger').length > 0) ? 'danger' : (protocolMessage.querySelectorAll('div span.warning').length > 0) ? 'warning' : 'success'; 
 					let div = document.createElement('div');
 					div.innerHTML = this.protocols[protocol].message;
@@ -196,11 +199,14 @@ class URLValidator {
 				protocolObject.status = 'danger';
 			}			
 			protocolObject.message = protocolMessage;
-
+			
+			// report for domain or host
+			// prepareCharacterMessage method will check individual character by categorize
 			let domainMessage = this.prepareCharacterMessage(this.urlCategory, 'domain', host);
 			domainObject.status = (domainMessage.querySelectorAll('div span.danger').length > 0) ? 'danger' : (domainMessage.querySelectorAll('div span.warning').length > 0) ? 'warning' : 'success'; 
 			domainObject.message = domainMessage;
 
+			// report for URL parameter including path and hashes
 			let urlParametersMessage = (urlParameters == null) ? defaultMessage : this.prepareCharacterMessage(this.urlCategory, 'parameters', urlParameters);
 			if (urlParameters !== null) {				
 					urlParametersObject.status = (urlParametersMessage.querySelectorAll('div span.danger').length > 0) ? 'danger' : (urlParametersMessage.querySelectorAll('div span.warning').length > 0) ? 'warning' : 'success';
@@ -209,6 +215,7 @@ class URLValidator {
 			}
 			urlParametersObject.message = urlParametersMessage;			
 
+			// report for overview based on protocol, domain or host and URL parameters
 			if (domainObject.status == 'danger' || protocolObject.status == 'danger' || urlParametersObject.status == 'danger') {
 				overviewObject.status = 'danger';
 			} else if (domainObject.status == 'warning' || protocolObject.status == 'warning' || urlParametersObject.status == 'warning') {
@@ -246,9 +253,12 @@ class URLValidator {
 				urlParameters = (urlParameters.trim().length > 0) ? urlParameters : null;
 			}
 
+			// report for protocol
+			// prepareCharacterMessage method will check individual character by categorize
 			let protocolMessage = (protocol == null) ? defaultMessage : this.prepareCharacterMessage(this.urlCategory, 'protocol', protocol);
 			if (protocol !== null) {
 				if (this.protocols.hasOwnProperty(protocol)) {
+					// adding message for protocol with existing prepareCharacterMessage for it
 					protocolObject.status = (protocolMessage.querySelectorAll('div span.danger').length > 0) ? 'danger' : (protocolMessage.querySelectorAll('div span.warning').length > 0) ? 'warning' : 'success'; 
 					let div = document.createElement('div');
 					div.innerHTML = this.protocols[protocol].message;
@@ -265,10 +275,12 @@ class URLValidator {
 			}			
 			protocolObject.message = protocolMessage;
 
+			// report for domain or host
 			let domainMessage = this.prepareCharacterMessage(this.urlCategory, 'domain', host);
 			domainObject.status = (domainMessage.querySelectorAll('div span.danger').length > 0) ? 'danger' : (domainMessage.querySelectorAll('div span.warning').length > 0) ? 'warning' : 'success'; 
 			domainObject.message = domainMessage;
 
+			// report for URL parameter including path and hashes
 			let urlParametersMessage = (urlParameters == null) ? defaultMessage : this.prepareCharacterMessage(this.urlCategory, 'parameters', urlParameters);
 			if (urlParameters !== null) {				
 					urlParametersObject.status = (urlParametersMessage.querySelectorAll('div span.danger').length > 0) ? 'danger' : (urlParametersMessage.querySelectorAll('div span.warning').length > 0) ? 'warning' : 'success';
@@ -277,6 +289,7 @@ class URLValidator {
 			}
 			urlParametersObject.message = urlParametersMessage;			
 			
+			// report for overview based on protocol, domain or host and URL parameters
 			if (domainObject.status == 'danger' || protocolObject.status == 'danger' || urlParametersObject.status == 'danger') {
 				overviewObject.status = 'danger';
 			} else if (domainObject.status == 'warning' || protocolObject.status == 'warning' || urlParametersObject.status == 'warning') {
@@ -285,15 +298,17 @@ class URLValidator {
 				overviewObject.status = 'success';
 			}
 
+			// report for homograph, homoglyph and IDN URL related 
 			let overviewMessage = '';
 			// Check for the host match with given URL 
 			if (this.url.match(host) == null) {
 				overviewMessage = 'It might be homoglyph or homograph or IDN URL. Because, the host is not matched with given URL. ';
 			}
-			overviewMessage += `Protocol is ${protocolObject.status} status, Domain Name is ${domainObject.status} status, URL part is ${urlParametersObject.status} status.`;
+			overviewMessage += `Protocol is ${protocolObject.status} status, Domain Name is ${domainObject.status} status, URL parameter is ${urlParametersObject.status} status.`;
 			overviewObject.message = overviewMessage;
 		}
 
+		// setting various messages to report property
 		this.report['overview'] = overviewObject;
 		this.report['protocol'] = protocolObject;
 		this.report['domain'] = domainObject;
@@ -301,7 +316,7 @@ class URLValidator {
 
 		return this.report;
 	}
-
+	// method to get character type for given character
 	getCharacterType(character) {
 		if (/[a-zA-Z]/.test(character)) {
 	    return "alphabet";
@@ -313,7 +328,7 @@ class URLValidator {
 	    return "unknown";
 	  }
 	}
-
+	// get character status from success, warning and danger based on certain rules 
 	getCharacterStatus(urlCategory, urlPart, character, charType) {
 		// Invalid URL
 		if (urlCategory == 'invalid' && charType == 'alphabet') {
@@ -408,15 +423,15 @@ class URLValidator {
 			return 'danger';
 		}
 	}
-
+	// method to get prepared message for given text
 	prepareCharacterMessage(urlCategory, urlPart, text) {
 		let message = document.createElement('div');
-		message.classList.add('message-container');
-		let div = document.createElement('div');
+		message.classList.add('message-container'); // overall message container 
+		let div = document.createElement('div'); // container for all span
 		let charType = null;
 		let status = null;
-		let characterArray = text.split('');
-
+		let characterArray = text.split(''); // split text into characters
+		// Iterate characters array
 		for (let character of characterArray) {				
 			charType = this.getCharacterType(character);
 			status = this.getCharacterStatus(urlCategory, urlPart, character, charType);
@@ -428,15 +443,7 @@ class URLValidator {
 		message.appendChild(div);
 		return message;
 	}
-
-	containsClassName(parentElement, className) {
-		for (let className of classList) {
-			element.classList.contains(className);
-			return true;
-		}
-		for (let child of children) { if(child.classList.contains('danger')) { return true; } else { return false; } }
-	}
-
+	// method to check whether given text is IP address or not
 	isIPAddress() {
 		// Check for IPv4 address
 		if (this.isIPv4(this.url)) {
@@ -452,16 +459,16 @@ class URLValidator {
 
 		return false;
 	}
-
+	// method to check whether given text is actual URL or not
 	isActualURL() {
   	let protocol = this.getURLProtocol(this.url);
-  	
+  	// check for valid protocol 
   	if (protocol === null || protocol === undefined || protocol === '') {
   		console.warn('URL does not has a valid protocol');
   		// missing or unknown protocol for try without protocol in URL class
   		this.isUnknownProtocol = true;
   	}
-
+		// If the URL does not contains valid protocol then try to re-initiate URL class
 		if (this.isUnknownProtocol) {
 			try {
 				this.urlObject = new URL('https://' + this.url);
@@ -482,12 +489,12 @@ class URLValidator {
 	  	}			
 		}
 	  			
-  	// check for IP from actual URL
+  	// check for IPv4 or not from actual URL
   	if (this.isIPv4(this.urlObject.host)) {
 			this.urlCategory = 'IPv4';
 			return true;
   	}
-  	
+  	// check for IPv6 or not from actual URL
   	if (this.isIPv6(this.urlObject.host)) {
 			this.urlCategory = 'IPv6';
 			return true;
@@ -502,10 +509,11 @@ class URLValidator {
 			return true;				  
 		}
 
+		// If all other conditions met false then it will be a invalid URL
 		this.urlCategory = 'invalid';
 		return false;	
 	}
-
+	// method to check whether it is an IPv4 address or not
 	isIPv4(url) {
 		// IPv4 Regex	that has 4 octet and may have port number 
   	const octet = '(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]?|0)';
@@ -516,13 +524,16 @@ class URLValidator {
   	return regex.test(url) ? true : regexWithPort.test(url);
 	}
 
+	// method to check whether it is an IPv6 address or not
 	isIPv6(url) {
+		// Validating IPv6 without regular expression due to its complexity
+		// split IPv6 address into octets array
 	  let groups = url.split(':');
 	  let groupsLength = groups.length;
 	  let isPortNumberExist = false;
 	  let portNumber = null;
 
-	  // check for number of double colon occurrence
+	  // check for number of double colon occurrence that treated as zero group in IPv6
 	  let zeroGroupCount = (url.match(/::/g) || []).length;
 
 	  if (zeroGroupCount > 1) {
@@ -550,7 +561,7 @@ class URLValidator {
 
 	  let doubleColonCount = 0;
 	  let nonZeroGroupCount = 0;
-
+	  // Iterate through IPv6 octets for validate that octet is valid
 	  for (const group of groups) {
 	    if (group === '') {
 	      if (doubleColonCount > 0) {	  			
@@ -578,6 +589,7 @@ class URLValidator {
 	  	groupCount++;
 	  }
 	  
+	  // Checking for valid octet group count determine its a valid
 	  return (groupCount === 8 || groupCount === 9);
 	}
 }
@@ -588,36 +600,43 @@ class URLValidator {
 
 // form submit event
 form.addEventListener('submit', function(event) {	
+	// Prevent form being submitted
 	event.preventDefault();
 	event.stopImmediatePropagation();
 
+	// Getting URL and validating it
 	let urlInput = form.urlInput.value;
+	if (urlInput.trim() == '' || urlInput.trim().length == 0) {
+		alert('Please provide URL');
+		return false;
+	}
+	// Initiate URLValidator class
 	const obj = new URLValidator(urlInput);	
 	let report = obj.getReport();
-	
+	// Check report is an object or not
 	if (typeof report != 'object') {
 		throw new Error('Unexpected error');
 		return false;
 	}
-	
+	// Provide response from report object
 	for (const key in report) {
 
 		if (report.hasOwnProperty(key)) {
 			
 			const statusClassList = ['success', 'warning', 'danger'];
 			for (const className of statusClassList) { 				
-				document.getElementById(key).classList.remove(className);
+				document.getElementById(key).classList.remove(className); // clearing previous status
 			}
 
-			document.getElementById(key).classList.add(report[key].status);
+			document.getElementById(key).classList.add(report[key].status); // adding new status
 			
 			if (typeof report[key].message === 'string' && report[key].message != null) {
-				document.querySelector(`#${key} .message`).innerHTML = report[key].message;
+				document.querySelector(`#${key} .message`).innerHTML = report[key].message; // replacing message if it is string
 			} else if (typeof report[key].message === 'object' && report[key].message != null) {
-				document.querySelector(`#${key} .message`).innerHTML = '';
+				document.querySelector(`#${key} .message`).innerHTML = ''; // clearing previous message before appending child element
 				document.querySelector(`#${key} .message`).appendChild(report[key].message);			
 			} else {
-				document.querySelector(`#${key} .message`).innerHTML = '';
+				document.querySelector(`#${key} .message`).innerHTML = ''; // Clearing previous message if invalid type
 			}
 		}
 	}
