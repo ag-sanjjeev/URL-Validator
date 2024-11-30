@@ -303,6 +303,8 @@ class URLValidator {
 			// Check for the host match with given URL 
 			if (this.url.match(host) == null) {
 				overviewMessage = 'It might be homoglyph or homograph or IDN URL. Because, the host is not matched with given URL. ';
+				domainObject.status = 'danger'; // might be a homoglyph or homograph or IDN URL
+				overviewObject.status = 'danger';
 			}
 			overviewMessage += `Protocol is ${protocolObject.status} status, Domain Name is ${domainObject.status} status, URL parameter is ${urlParametersObject.status} status.`;
 			overviewObject.message = overviewMessage;
