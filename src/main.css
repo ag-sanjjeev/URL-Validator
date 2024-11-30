@@ -13,7 +13,7 @@
 .app-container {
 	padding: 0.5rem;
 	max-height: 75vh;	
-	height: 30rem;
+	height: 31rem;
 	animation-name: appLoadingWidth, appLoadingHeight;
   animation-duration: 2s, 3s;
   animation-delay: 0s, 2s;
@@ -105,6 +105,32 @@
 .report-section.danger .report-badge {
 	color: var(--bs-danger);
 	border-color: var(--bs-danger);
+}
+
+.legend-container .legend {
+	display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 5px;
+}
+
+.legend .circle {
+	display: block;
+	width: 15px;
+	aspect-ratio: 1;
+	border-radius: 4px;	
+}
+
+.legend.success .circle {
+	background-color: var(--bs-success);
+}
+
+.legend.warning .circle {
+	background-color: var(--bs-warning);
+}
+
+.legend.danger .circle {
+	background-color: var(--bs-danger);
 }
 
 /* Keyframes */
