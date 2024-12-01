@@ -16,10 +16,18 @@ This documentation gives basic and technical information about the project. See 
 First [README](./README.md) when you refer and using the project. 
 
 ## &#9873; Why it is need
-We are using digital services in our day to day life. Sending and receiving a web link is in common. As much as Cyber Security threats are improving to target the user to take control by them. To prevent from various Cyber Security attacks, The awareness, technology and updates are roaming around us. Due to this gives a panic when using the web link that might be a problem. Eventhough, we are trusted to use familiar and popular sites and their links. The attacks modernized as per people mindset. One of the Cyber Security attack taken against the people who are trust with familiar and popular sites. Attackers serve the URLs or Web Links that look like familiar and popular sites. This kinds of URLs or Web Links are knowns `homoglyph`, `homograph`, `IDN` and `Unicode Domain Name` attack. To clarify before click or open those URLs is needed. 
+We are using digital services in our day to day life. Sending and receiving a web link is in common. As much as Cyber Security threats are improving to target the user to take control by them. To prevent from various Cyber Security attacks, The awareness, technology and updates are roaming around us. Due to this gives a panic when using the web link that might be a problem. Eventhough, we are trusted to use familiar and popular sites and their links. The attacks modernized as per people mindset. One of the Cyber Security attack taken against the people who are trust with familiar and popular sites. Attackers serve the URLs or Web Links that look like familiar and popular sites. This kinds of URLs or Web Links are knowns `homoglyph`, `homograph`, `IDN` and `Unicode Domain Phishing` attacks. 
+
+`Unicode Domain Phishing` is also known as script spoofing or internationalized domain name (IDN) `homograph` attack. It is one of the cyber attack where attackers exploit with the visual similarity of characters in the URLs and Links.
+
+Attackers register domain names similar to the popular and familiar site with visual similarities of characters that look like alphabets, but are actually from different scripts or writing system or characters. This creates deceptive and false URLs that appears as popular and legitimate site address to users, but actually lead to malicious websites. 
+
+It is hard to detect, due to many lookalike characters between different alphabets in different languages. For example, the Greek `Ο`, Latin `O`, and Cyrillic `О` look similar to English capital letter `O` (/O/ - Oh). But these are not assigned with the same code. 
+
+It is important to clarify before click or open those URLs is needed.
 
 ## &#9873; What it can
-- It can check and validate given URL for `homoglyph`, `homograph`, `IDN` and `Unicode Domain Name` URLs.
+- It can check and validate given URL for `homoglyph`, `homograph`, `IDN` and `Unicode Domain Phishing` URLs.
 - It can check basis format check for IPv4, IPv6 and URL that you given.
 - It can provide basic information as a report to the user about the given URL.
 - This will give instant check feature before proceed with trusted links and URLs. But it is not an complete analysis of remote website.
@@ -113,7 +121,7 @@ We are using digital services in our day to day life. Sending and receiving a we
 - It is not an empty then it starts to validate.
 - It takes type of the address given.
 - It checks whether the given address is valid or invalid.
-- It checks individual characters for any other `homoglyph`, `homograph` or `Unicode Domain` related. 
+- It checks individual characters for any other `homoglyph`, `homograph` or `Unicode Domain Phishing` related. 
 - It gives report based on validation with three different status.
 - The report gives feasibility to the user for cross check between Input address with various parts of the address as `protocol`, `domain`, `URL parameters`.
 - From this, any suspicious characters might reveal to stay alert with these address. 
