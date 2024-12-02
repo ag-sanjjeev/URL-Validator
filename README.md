@@ -35,9 +35,16 @@ To install the project, follow these steps:
 
 If you want to see demo or run on any device with Internet then follow this [URL Validator](https://arathinai.blogspot.com/p/url-validator.html).
 
-Otherwise to run on your device without Internet then follow the below steps:
-- Clone the repository to your local machine or Download this repository.
+To run on your device then follow the below steps:
+- Clone or Download this repository to your local device.
 - Navigate to the repository folder and find `index.html` file.
+- Run or Open in your browser.
+
+Otherwise to run on your device without Internet then follow the below steps:
+- Clone or Download this repository to your local device.
+- Navigate to the repository folder and find `index.html` file.
+- Download and Add `third-party` libraries and plugins inside the project directory, If required.
+- Replace `CDN` links with downloaded library respectively.
 - Run or Open in your browser.
 
 ## &#9873; Usage
